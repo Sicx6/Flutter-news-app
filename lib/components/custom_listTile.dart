@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_news_/screens/article_screes.dart';
+import 'package:flutter_news_/services/api.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../model/article_model.dart';
 
-Widget customListTile(Article article, BuildContext context) {
+Widget customListTile(
+    Article article, BuildContext context, List<Article> wishList) {
   return InkWell(
     onTap: () {
-      // Navigator.push(context, MaterialPageRoute(builder: (context) {
-      //   return ArticlePage(article: article);
-      // }));
       Navigator.push(
           context,
           PageTransition(
@@ -43,7 +42,9 @@ Widget customListTile(Article article, BuildContext context) {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
-                image: NetworkImage(article.urlToImage),
+                image: article.urlToImage.isNotEmpty
+                    ? NetworkImage(article.urlToImage)
+                    : const NetworkImage(''),
                 fit: BoxFit.fill,
               ),
             ),
@@ -51,25 +52,38 @@ Widget customListTile(Article article, BuildContext context) {
           const SizedBox(
             height: 8,
           ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Text(
-              article.source.name,
-              style: GoogleFonts.lato(
-                  textStyle: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(
+                  article.source.name,
+                  style: GoogleFonts.lato(
+                      textStyle: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    article.isAddedToWishlist
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: article.isAddedToWishlist ? Colors.red : null,
+                  ))
+            ],
           ),
           const SizedBox(
             height: 8,
           ),
           Text(
             article.title,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
           )
         ],
       ),

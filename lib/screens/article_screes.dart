@@ -67,7 +67,7 @@ class ArticlePage extends StatelessWidget {
             InkWell(
               child: Text(
                 article.url,
-                style: TextStyle(color: Colors.blue),
+                style: const TextStyle(color: Colors.blue),
               ),
               onTap: () {},
             )
