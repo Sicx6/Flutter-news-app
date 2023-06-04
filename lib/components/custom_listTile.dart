@@ -2,15 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_news_/Provider/theme_provider.dart';
 import 'package:flutter_news_/screens/article_screes.dart';
 import 'package:flutter_news_/services/api.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 import '../model/article_model.dart';
 
 Widget customListTile(
     Article article, BuildContext context, List<Article> wishList) {
+  var theme = Provider.of<ThemeChanger>(
+    context,
+  );
   return InkWell(
     onTap: () {
       Navigator.push(
@@ -23,7 +28,7 @@ Widget customListTile(
       margin: const EdgeInsets.all(12),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.themeMode == ThemeMode.light ? Colors.white : Colors.grey,
         borderRadius: BorderRadius.circular(18),
         boxShadow: const [
           BoxShadow(
@@ -44,7 +49,8 @@ Widget customListTile(
               image: DecorationImage(
                 image: article.urlToImage.isNotEmpty
                     ? NetworkImage(article.urlToImage)
-                    : const NetworkImage(''),
+                    : AssetImage('assets/images/nocontent.jpg')
+                        as ImageProvider,
                 fit: BoxFit.fill,
               ),
             ),
@@ -83,7 +89,10 @@ Widget customListTile(
           ),
           Text(
             article.title,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
+            style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 17,
+                color: Color.fromARGB(221, 32, 32, 32)),
           )
         ],
       ),

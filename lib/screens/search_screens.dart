@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_news_/Provider/theme_provider.dart';
 import 'package:flutter_news_/components/custom_listTile.dart';
 import 'package:flutter_news_/model/article_model.dart';
 import 'package:flutter_news_/services/api.dart';
+import 'package:provider/provider.dart';
 
 class ArticleSearchDelegate extends SearchDelegate<String> {
   final List<Article> wishlist;
@@ -10,18 +12,29 @@ class ArticleSearchDelegate extends SearchDelegate<String> {
   @override
   ThemeData appBarTheme(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    var themer = Provider.of<ThemeChanger>(context);
     return theme.copyWith(
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
-        textTheme: TextTheme(
-          headline6: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-          ),
-        ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black,
         ),
+        toolbarTextStyle: TextTheme(
+          titleLarge: TextStyle(
+            color: themer.themeMode == ThemeMode.light
+                ? Colors.black
+                : Colors.white,
+            fontSize: 20,
+          ),
+        ).bodyMedium,
+        titleTextStyle: TextTheme(
+          titleLarge: TextStyle(
+            color: themer.themeMode == ThemeMode.light
+                ? Colors.black
+                : Colors.white,
+            fontSize: 20,
+          ),
+        ).titleLarge,
       ),
     );
   }
@@ -41,7 +54,7 @@ class ArticleSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, '');
       },

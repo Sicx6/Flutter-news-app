@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'source_model.dart';
 
 class Article {
@@ -34,5 +37,19 @@ class Article {
       urlToImage: json['urlToImage'] ?? '',
       url: json['url'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'source': source.toMap(),
+      'author': author,
+      'title': title,
+      'description': description,
+      'url': url,
+      'urlToImage': urlToImage,
+      'publishedAt': publishedAt,
+      'content': content,
+      'isAddedToWishlist': isAddedToWishlist,
+    };
   }
 }

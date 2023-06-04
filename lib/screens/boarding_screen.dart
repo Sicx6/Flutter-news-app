@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_news_/Provider/theme_provider.dart';
 import 'package:flutter_news_/const/app_assets.dart';
 import 'package:flutter_news_/screens/homepage.dart';
+import 'package:flutter_news_/screens/signin_screen.dart';
+import 'package:provider/provider.dart';
 
 class BoardingScreen extends StatefulWidget {
   const BoardingScreen({Key? key}) : super(key: key);
@@ -15,25 +18,29 @@ class _BoardingScreenState extends State<BoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Provider.of<ThemeChanger>(context);
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (int page) {
-                  setState(() {
-                    _currentPage = page;
-                  });
-                },
-                children: AppAssets.pages,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (int page) {
+                    setState(() {
+                      _currentPage = page;
+                    });
+                  },
+                  children: AppAssets.pages,
+                ),
               ),
-            ),
-            _buildIndicators(),
-            const SizedBox(height: 16),
-            _buildBottomButtons(),
-          ],
+              _buildIndicators(),
+              const SizedBox(height: 16),
+              _buildBottomButtons(),
+            ],
+          ),
         ),
       ),
     );
@@ -86,7 +93,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  MaterialPageRoute(builder: (context) => SignUpPage()),
                 );
               },
               child: const Text('GET STARTED'),
@@ -133,4 +140,26 @@ class BoardingPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class AppAssets {
+  static List<Widget> pages = [
+    const BoardingPage(
+      image: 'assets/images/onboarding1.png',
+      title: 'Welcome to MyNews App',
+      description: 'Get the latest news at your fingertips!',
+    ),
+    const BoardingPage(
+      image: 'assets/images/onboarding2.png',
+      title: 'Explore Different Categories',
+      description:
+          'Discover news in various categories such as technology, sports, and more.',
+    ),
+    const BoardingPage(
+      image: 'assets/images/onboarding3.png',
+      title: 'Save Your Favorite Articles',
+      description:
+          'Bookmark articles to read them later and create your personalized reading list.',
+    ),
+  ];
 }

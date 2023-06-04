@@ -10,4 +10,6 @@ class Source {
       name: json['name'] ?? '',
     );
   }
+
+  toMap() {}
 }
