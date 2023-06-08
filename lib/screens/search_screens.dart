@@ -6,12 +6,11 @@ import 'package:flutter_news_/services/api.dart';
 import 'package:provider/provider.dart';
 
 class ArticleSearchDelegate extends SearchDelegate<String> {
-  final List<Article> wishlist;
-
-  ArticleSearchDelegate(this.wishlist);
+  ArticleSearchDelegate();
   @override
   ThemeData appBarTheme(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+
     var themer = Provider.of<ThemeChanger>(context);
     return theme.copyWith(
       appBarTheme: AppBarTheme(
@@ -73,7 +72,10 @@ class ArticleSearchDelegate extends SearchDelegate<String> {
           return ListView.builder(
             itemCount: searchResults.length,
             itemBuilder: (context, index) {
-              return customListTile(searchResults[index], context, wishlist);
+              return customListTile(
+                article: searchResults[index],
+                context: context,
+              );
             },
           );
         } else if (snapshot.hasError) {

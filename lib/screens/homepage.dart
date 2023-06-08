@@ -19,8 +19,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _searchQuery = '';
-
-  List<Article> wishList = [];
+  List<Article> wishlistArticles = [];
+  String wishlistId = 'your-wishlist-id';
 
   void navigateCountryScreen() {
     Navigator.pushNamed(context, CountryNews.routeName);
@@ -31,21 +31,26 @@ class _MyHomePageState extends State<MyHomePage> {
     var theme = Provider.of<ThemeChanger>(context, listen: false);
     Api client = Api();
     return Scaffold(
-      body: FutureBuilder(
+      body: FutureBuilder<List<Article>>(
         future: client.getArticle(),
-        builder: (context, AsyncSnapshot<List<Article>> snapshot) {
-          if (snapshot.hasData) {
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
             List<Article> articles = snapshot.data!;
             return ListView.builder(
               itemCount: articles.length,
               itemBuilder: (context, index) {
-                return customListTile(articles[index], context, wishList);
+                return customListTile(
+                  article: articles[index],
+                  context: context,
+                );
               },
             );
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return Center(child: Text('No articles found'));
           }
         },
       ),

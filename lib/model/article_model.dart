@@ -1,7 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-
-import 'source_model.dart';
+import 'package:flutter_news_/model/source_model.dart';
 
 class Article {
   Source source;
@@ -12,7 +9,7 @@ class Article {
   String urlToImage;
   String publishedAt;
   String content;
-  bool isAddedToWishlist;
+  bool isAddedToFavourite;
 
   Article({
     required this.source,
@@ -23,12 +20,12 @@ class Article {
     required this.urlToImage,
     required this.publishedAt,
     required this.content,
-    this.isAddedToWishlist = false,
+    this.isAddedToFavourite = false,
   });
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
-      source: Source.fromJson(json['source'] ?? 'no author'),
+      source: Source.fromJson(json['source'] ?? {'name': 'No Source'}),
       author: json['author'] ?? '',
       title: json['title'] ?? '',
       publishedAt: json['publishedAt'] ?? '',
@@ -49,7 +46,7 @@ class Article {
       'urlToImage': urlToImage,
       'publishedAt': publishedAt,
       'content': content,
-      'isAddedToWishlist': isAddedToWishlist,
+      'isAddedToFavourite': isAddedToFavourite,
     };
   }
 }

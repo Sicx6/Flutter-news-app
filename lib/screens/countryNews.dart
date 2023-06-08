@@ -1,6 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_news_/components/custom_listTile.dart';
 import 'package:flutter_news_/model/article_model.dart';
 import 'package:flutter_news_/services/api.dart';
@@ -8,8 +8,12 @@ import 'package:flutter_news_/services/api.dart';
 class CountryNews extends StatelessWidget {
   static const String routeName = '/country-screen';
   final String country;
+// Add the wishlistId variable
 
-  const CountryNews({required this.country});
+  const CountryNews({
+    Key? key,
+    required this.country,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,10 @@ class CountryNews extends StatelessWidget {
             return ListView.builder(
               itemCount: articles.length,
               itemBuilder: (context, index) {
-                return customListTile(articles[index], context, []);
+                return customListTile(
+                    article: articles[index],
+                    context: context,
+                  );
               },
             );
           } else {

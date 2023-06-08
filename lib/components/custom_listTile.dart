@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_news_/Provider/theme_provider.dart';
+import 'package:flutter_news_/Provider/user_provider.dart';
 import 'package:flutter_news_/screens/article_screes.dart';
 import 'package:flutter_news_/services/api.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,18 +12,46 @@ import 'package:provider/provider.dart';
 
 import '../model/article_model.dart';
 
-Widget customListTile(
-    Article article, BuildContext context, List<Article> wishList) {
+Widget customListTile({
+  required Article article,
+  required BuildContext context,
+}) {
   var theme = Provider.of<ThemeChanger>(
     context,
   );
+
+  final user = Provider.of<AppUser>(context).user;
+
+  Api api = Api();
+  void toggleFavorite() async {
+    try {
+      if (user != null) {
+        if (article.isAddedToFavourite) {
+          // Remove the article from favorites
+          await api.removeFavoriteArticle(article);
+        } else {
+          // Add the article to favorites
+          await api.addFavoriteArticle(article);
+        }
+        // Toggle the isAddedToFavourite property
+        article.isAddedToFavourite = !article.isAddedToFavourite;
+      } else {
+        print('User is not authenticated');
+      }
+    } catch (e) {
+      print('Error toggling article favorite status: $e');
+    }
+  }
+
   return InkWell(
     onTap: () {
       Navigator.push(
-          context,
-          PageTransition(
-              type: PageTransitionType.fade,
-              child: ArticlePage(article: article)));
+        context,
+        PageTransition(
+          type: PageTransitionType.fade,
+          child: ArticlePage(article: article),
+        ),
+      );
     },
     child: Container(
       margin: const EdgeInsets.all(12),
@@ -48,9 +77,8 @@ Widget customListTile(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
                 image: article.urlToImage.isNotEmpty
-                    ? NetworkImage(article.urlToImage)
-                    : AssetImage('assets/images/nocontent.jpg')
-                        as ImageProvider,
+                    ? NetworkImage(article.urlToImage) as ImageProvider
+                    : AssetImage('assets/images/nocontent.jpg'),
                 fit: BoxFit.fill,
               ),
             ),
@@ -70,18 +98,26 @@ Widget customListTile(
                 child: Text(
                   article.source.name,
                   style: GoogleFonts.lato(
-                      textStyle: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold)),
+                    textStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
               IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    article.isAddedToWishlist
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: article.isAddedToWishlist ? Colors.red : null,
-                  ))
+                onPressed: () {
+                  if (!article.isAddedToFavourite) {
+                    api.addFavoriteArticle(article);
+                  }
+                },
+                icon: Icon(
+                  article.isAddedToFavourite
+                      ? Icons.favorite
+                      : Icons.favorite_border,
+                  color: article.isAddedToFavourite ? Colors.red : null,
+                ),
+              ),
             ],
           ),
           const SizedBox(
@@ -90,10 +126,11 @@ Widget customListTile(
           Text(
             article.title,
             style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 17,
-                color: Color.fromARGB(221, 32, 32, 32)),
-          )
+              fontWeight: FontWeight.w600,
+              fontSize: 17,
+              color: Color.fromARGB(221, 32, 32, 32),
+            ),
+          ),
         ],
       ),
     ),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_news_/Provider/theme_provider.dart';
+import 'package:flutter_news_/common/app_color.dart';
 import 'package:flutter_news_/const/app_assets.dart';
 import 'package:flutter_news_/screens/homepage.dart';
 import 'package:flutter_news_/screens/signin_screen.dart';
 import 'package:provider/provider.dart';
 
 class BoardingScreen extends StatefulWidget {
+  static const String routeName = '/boarding-screen';
   const BoardingScreen({Key? key}) : super(key: key);
 
   @override
@@ -20,6 +22,7 @@ class _BoardingScreenState extends State<BoardingScreen> {
   Widget build(BuildContext context) {
     var theme = Provider.of<ThemeChanger>(context);
     return Scaffold(
+      backgroundColor: AppColor.lightPurple,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

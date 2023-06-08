@@ -1,6 +1,13 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_news_/model/article_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import '../Provider/user_provider.dart';
 
 class Api {
   final url =
@@ -79,6 +86,94 @@ class Api {
       throw Exception('Failed to search articles');
     }
   }
+
+  Future<void> addFavoriteArticle(Article article) async {
+    final user = FirebaseAuth.instance.currentUser;
+    try {
+      if (user != null) {
+        article.isAddedToFavourite = true; // Set isAddedToFavourite to true
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('articles')
+            .add(article.toJson());
+
+        Fluttertoast.showToast(msg: 'Article Added to Favourites');
+      } else {
+        // Handle case when user is not authenticated
+        print('User is not authenticated');
+      }
+    } catch (e) {
+      print('Error adding article to favorites: $e');
+    }
+  }
+
+  Future<void> removeFavoriteArticle(Article article) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('articles')
+            .where('url', isEqualTo: article.url)
+            .get();
+
+        querySnapshot.docs.forEach((doc) {
+          doc.reference.delete();
+        });
+
+        print('Article removed from favorites successfully');
+      } else {
+        print('User is not authenticated');
+      }
+    } catch (e) {
+      print('Error removing article from favorites: $e');
+    }
+  }
+
+  // Stream<Article> getFavouriteArticleStream(Article article) {
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   final snapshot = FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(user!.uid)
+  //       .collection('articles')
+  //       .where('author', isEqualTo: article.author)
+  //       .orderBy('publishedAt', descending: true)
+  //       .snapshots();
+
+  //   return snapshot.map((querySnapshot) {
+  //     final docs = querySnapshot.docs;
+  //     if (docs.isNotEmpty) {
+  //       final doc = docs.first;
+  //       return Article.fromJson(doc.data());
+  //     } else {
+  //       return Article()''
+  //     }
+  //   });
+
+  Future<List<Article>> getFavouriteArticle() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .collection('articles')
+        .get();
+
+    return snapshot.docs
+        .map((e) => Article.fromJson(e.data() as Map<String, dynamic>))
+        .toList();
+  }
+
+  Stream<List<Article>> getFavouriteArticleStream() {
+    final user = FirebaseAuth.instance.currentUser;
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .collection('articles')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((e) => Article.fromJson(e.data() as Map<String, dynamic>))
+            .toList());
+  }
 }
-
-
